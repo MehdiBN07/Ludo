@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LUDO</title> <style>
+    <title>LUDO</title>
+    <style>
         :root {
             --red: #ff3c3c; --blue: #1e8fff; --green: #2ecc71; --yellow: #f1c40f;
             --white: #ffffff; --border: #222; --dark-bg: #2c3e50;
@@ -17,29 +18,34 @@
             touch-action: manipulation; user-select: none;
         }
 
-        /* مغير اللغة */
+        /* --- إضافة واجهة الفوز والخسارة المخصصة --- */
+        #game-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #2c3e50; padding: 30px; border-radius: 20px;
+            border: 3px solid white; text-align: center; color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); width: 80%; max-width: 350px;
+        }
+        /* -------------------------------------- */
+
         #lang-section { position: fixed; top: 20px; left: 20px; z-index: 4000; }
         #lang-section select { 
             padding: 8px; border-radius: 8px; background: var(--btn-bg); 
             color: white; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; 
         }
 
-        /* زر المنزل (رابط THE GAMEHUB) */
         #home-link-container { position: fixed; top: 20px; right: 20px; z-index: 5000; }
         .home-link-btn {
-            background: var(--btn-bg); 
-            color: #ecf0f1; 
-            width: 55px; height: 55px;
+            background: var(--btn-bg); color: #ecf0f1; width: 55px; height: 55px;
             border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; text-decoration: none; 
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px #1a252f;
-            transition: all 0.2s ease;
+            font-size: 1.6rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px #1a252f; transition: all 0.2s ease;
         }
-        .home-link-btn:hover { background: #3e5871; border-color: var(--blue); }
-        .home-link-btn:active { transform: translateY(2px); box-shadow: 0 2px #1a252f; }
 
-        /* أنيميشن التنبيه النابض */
         @keyframes alert-pulse {
             0% { transform: scale(1); filter: drop-shadow(0 0 0px var(--red)); }
             50% { transform: scale(1.03); filter: drop-shadow(0 0 8px var(--red)); opacity: 0.8; }
@@ -50,7 +56,6 @@
             color: var(--red); font-weight: bold; font-size: 1.1rem;
             margin-top: 15px; text-align: center; width: 100%;
             animation: alert-pulse 1.5s infinite ease-in-out;
-            cursor: default;
         }
 
         .menu-overlay { 
@@ -86,7 +91,7 @@
         .home-green { grid-column: 1/7; grid-row: 10/16; background: var(--green); }
         .home-yellow { grid-column: 10/16; grid-row: 10/16; background: var(--yellow); }
         .center { grid-column: 7/10; grid-row: 7/10; background: conic-gradient(var(--red) 0deg 90deg, var(--blue) 90deg 180deg, var(--green) 180deg 270deg, var(--yellow) 270deg 360deg); border: 2px solid var(--border); }
-        .pawn { width: 80%; height: 80%; border-radius: 50%; border: 3px solid white; z-index: 100; cursor: pointer; }
+        .pawn { width: 80%; height: 80%; border-radius: 50%; border: 3px solid white; z-index: 100; cursor: pointer; transition: all 0.3s; }
         .slot-container { width: 100%; height: 100%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15%; padding: 15%; box-sizing: border-box; }
         .slot { background: rgba(255,255,255,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .controls { margin-top: 30px; background: #34495e; color: white; padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 450px; }
@@ -94,6 +99,15 @@
     </style>
 </head>
 <body>
+
+    <div id="game-modal">
+        <div class="modal-box">
+            <h2 id="modal-status">مبروك الفوز!</h2>
+            <h3 id="winner-name" style="font-size: 2rem; margin: 15px 0;">اللون الأحمر</h3>
+            <button class="btn btn-primary" onclick="closeModal()">مواكبة اللعب</button>
+            <button class="btn" style="width: 100%; background: #95a5a6;" onclick="location.reload()">الرئيسية</button>
+        </div>
+    </div>
 
     <div id="lang-section">
         <select onchange="changeLanguage(this.value)">
@@ -104,14 +118,15 @@
     </div>
 
     <div id="home-link-container">
-        <a href="https://mehdibn07.github.io/THE-GAMEHUB/?fbclid=PAb21jcAQ6Ov5leHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAadpy1KNcVMgeG8IwaXr63Zt_4C6p3-BdA8IjciAGZf8yYSLL3xvtFIbsq44AA_aem_1zkFfO1rL0YSJJeEv9BhJg&utm_source=ig&utm_medium=social&utm_content=link_in_bio" class="home-link-btn" title="THE GAMEHUB">🏠</a>
+        <a href="https://mehdibn07.github.io/THE-GAMEHUB/" class="home-link-btn" title="THE GAMEHUB">🏠</a>
     </div>
 
     <button id="back-btn" class="hidden" onclick="goBack()" data-i18n="back">رجوع ↩</button>
     <button id="main-exit-btn" style="position: fixed; bottom: 30px; left: 30px; width: 65px; height: 65px; background: #e74c3c; color: white; border-radius: 50%; cursor: pointer; font-size: 2rem; display: none; align-items: center; justify-content: center; z-index: 3000; border:none;" onclick="location.reload()">🚪</button>
 
     <div id="screen-main" class="menu-overlay">
-        <h1 style="font-size: 5rem; margin-bottom: 20px; letter-spacing: 5px;">LUDO</h1> <button class="btn btn-primary" onclick="navigateTo('screen-mode')" data-i18n="startBtn">ابدأ اللعب</button>
+        <h1 style="font-size: 5rem; margin-bottom: 20px; letter-spacing: 5px;">LUDO</h1>
+        <button class="btn btn-primary" onclick="navigateTo('screen-mode')" data-i18n="startBtn">ابدأ اللعب</button>
         <div id="warn-msg" data-i18n="warning">⚠️ تنبيه: ممنوع القمار</div>
     </div>
 
@@ -163,6 +178,8 @@
             fr: { warning: "⚠️ Pas de Pari", back: "Retour ↩", startBtn: "Jouer", chooseMode: "Mode", modeFriends: "👥 Amis", modeBot: "🤖 vs Robot", turn: "Tour:", rollMsg: "Lancer le dé", human: "Joueur", bots: "Robot", howManyHumans: "Combien de joueurs?", howManyBots: "Combien de robots?" }
         };
 
+        const namesMap = { red: "الأحمر", blue: "الأزرق", green: "الأخضر", yellow: "الأصفر" };
+        let winners = [];
         let currentLang = 'ar';
         let gameConfig = { mode: '', humanCount: 0, botCount: 0, players: [], botPlayers: [] };
         let navigationHistory = ['screen-main'];
@@ -181,7 +198,6 @@
         function navigateTo(screenId) {
             document.querySelectorAll('.menu-overlay').forEach(s => s.classList.add('hidden'));
             document.getElementById(screenId).classList.remove('hidden');
-            
             if (screenId === 'screen-main') {
                 document.getElementById('lang-section').classList.remove('hidden');
                 document.getElementById('home-link-container').classList.remove('hidden');
@@ -204,6 +220,7 @@
 
         function resetLogic() {
             gameConfig = { mode: '', humanCount: 0, botCount: 0, players: [], botPlayers: [] };
+            winners = [];
             currentSelectingPlayer = 1;
             document.querySelectorAll('.color-opt').forEach(o => o.style.visibility = 'visible');
             document.getElementById('color-title').innerText = "لاعب 1: اختر لونك";
@@ -269,6 +286,7 @@
             document.querySelectorAll('.menu-overlay').forEach(s => s.classList.add('hidden'));
             document.getElementById('game-container').style.display = 'flex';
             initBoard(); setupPawns(); updateTurnUI();
+            checkBotTurn();
         }
 
         function initBoard() {
@@ -304,39 +322,134 @@
             });
         }
 
-        function handleDiceClick() { if (canRoll && !gameConfig.botPlayers.includes(gameConfig.players[currentPlayerIdx])) rollDice(); }
+        function handleDiceClick() { 
+            if (canRoll && !gameConfig.botPlayers.includes(gameConfig.players[currentPlayerIdx])) {
+                rollDice();
+            }
+        }
 
         function rollDice() {
+            canRoll = false;
             diceValue = Math.floor(Math.random() * 6) + 1;
             document.getElementById('dice').innerText = diceValue;
-            canRoll = false;
+            
             let color = gameConfig.players[currentPlayerIdx];
-            if (!pawnPositions[color].some(p => p !== -1 || diceValue === 6)) setTimeout(nextTurn, 1000);
+            let playablePawns = [];
+            pawnPositions[color].forEach((pos, idx) => {
+                // منع تحريك القطع التي دخلت بالفعل للمنتصف (فوق 56 خطوة تقريباً)
+                if (pos < 56) {
+                    if (pos !== -1 || diceValue === 6) playablePawns.push(idx);
+                }
+            });
+
+            if (playablePawns.length === 0) {
+                setTimeout(nextTurn, 1000);
+            } else if (gameConfig.botPlayers.includes(color)) {
+                setTimeout(() => {
+                    const randomPawn = playablePawns[Math.floor(Math.random() * playablePawns.length)];
+                    movePawn(color, randomPawn);
+                }, 1000);
+            }
         }
 
         function movePawn(color, index) {
-            if (color !== gameConfig.players[currentPlayerIdx] || canRoll) return;
             let pos = pawnPositions[color][index];
-            if (pos === -1 && diceValue === 6) { pawnPositions[color][index] = 0; updatePawnUI(color, index); finishMove(); }
-            else if (pos !== -1) { pawnPositions[color][index] += diceValue; updatePawnUI(color, index); finishMove(); }
+            if (pos === -1 && diceValue === 6) {
+                pawnPositions[color][index] = 0;
+            } else if (pos !== -1) {
+                pawnPositions[color][index] += diceValue;
+            } else { return; }
+            
+            updatePawnUI(color, index);
+            
+            // التحقق من الفوز لهذا اللاعب
+            if (pawnPositions[color].every(p => p >= 56)) {
+                if (!winners.includes(color)) {
+                    winners.push(color);
+                    showStatusModal(color, "win");
+                }
+            }
+
+            if (diceValue === 6) {
+                canRoll = true;
+                document.getElementById('dice').innerText = "🎲";
+                checkBotTurn();
+            } else {
+                nextTurn();
+            }
         }
 
-        function finishMove() { (diceValue === 6) ? (canRoll = true) : nextTurn(); }
-        function nextTurn() { currentPlayerIdx = (currentPlayerIdx + 1) % gameConfig.players.length; canRoll = true; updateTurnUI(); }
+        function nextTurn() {
+            // تخطي الفائزين في الدور
+            do {
+                currentPlayerIdx = (currentPlayerIdx + 1) % gameConfig.players.length;
+            } while (winners.includes(gameConfig.players[currentPlayerIdx]) && winners.length < gameConfig.players.length);
+
+            // إذا بقي شخص واحد فقط
+            if (winners.length === gameConfig.players.length - 1) {
+                let loser = gameConfig.players.find(p => !winners.includes(p));
+                showStatusModal(loser, "lose");
+                return;
+            }
+
+            canRoll = true;
+            updateTurnUI();
+            checkBotTurn();
+        }
+
+        function checkBotTurn() {
+            let color = gameConfig.players[currentPlayerIdx];
+            if (gameConfig.botPlayers.includes(color) && canRoll && !winners.includes(color)) {
+                setTimeout(rollDice, 1000);
+            }
+        }
         
         function updateTurnUI() {
             const c = gameConfig.players[currentPlayerIdx];
             const names = {red:'الأحمر', blue:'الأزرق', green:'الأخضر', yellow:'الأصفر'};
-            document.getElementById('p-name').innerText = names[c] || c;
+            document.getElementById('p-name').innerText = (names[c] || c) + (gameConfig.botPlayers.includes(c) ? " (🤖)" : "");
             document.getElementById('p-name').style.color = `var(--${c})`;
+            document.getElementById('dice').innerText = "🎲";
         }
         
         function updatePawnUI(color, index) {
             const pos = pawnPositions[color][index];
-            const coords = commonPath[(startIdx[color] + pos) % 52];
             const pawn = document.getElementById(`${color}-${index}`);
+            
+            if (pos >= 56) { // إذا دخلت القطعة المركز
+                pawn.style.display = "none";
+                return;
+            }
+
+            const coords = commonPath[(startIdx[color] + pos) % 52];
             const cell = document.getElementById(`c-${coords[0]}-${coords[1]}`);
             if (cell) cell.appendChild(pawn);
+        }
+
+        /* --- دوال الواجهة المنبثقة الجديدة --- */
+        function showStatusModal(color, type) {
+            const modal = document.getElementById('game-modal');
+            const statusTxt = document.getElementById('modal-status');
+            const nameTxt = document.getElementById('winner-name');
+
+            if (type === "win") {
+                statusTxt.innerText = "مبروك الفوز! 🎉";
+                statusTxt.style.color = "#2ecc71";
+            } else {
+                statusTxt.innerText = "لقد خسرت! 😞";
+                statusTxt.style.color = "#ff3c3c";
+            }
+
+            nameTxt.innerText = "اللون " + namesMap[color];
+            nameTxt.style.color = `var(--${color})`;
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('game-modal').style.display = "none";
+            if (winners.length < gameConfig.players.length - 1) {
+                nextTurn();
+            }
         }
     </script>
 </body>
